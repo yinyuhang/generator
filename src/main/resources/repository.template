@@ -1,0 +1,8 @@
+package ${package}.repository;
+
+import ${package}.pojo.${name};
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+public interface ${name}Repository extends JpaRepository<${name}, String>, JpaSpecificationExecutor<${name}> {
+}

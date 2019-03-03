@@ -1,0 +1,60 @@
+package ${package}.controller;
+
+import ${package}.repository.${name}Repository;
+import ${package}.pojo.${name};
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.querydsl.QPageRequest;
+import org.springframework.web.bind.annotation.*;
+
+import javax.persistence.criteria.*;
+import java.util.ArrayList;
+import java.util.List;
+
+
+@RestController
+public class ${name}Controller {
+    @Autowired
+    ${name}Repository ${lower_name}Repository;
+
+    @GetMapping("/${lower_name}s")
+    Page<${name}> queryByName(int pageIndex, int pageSize
+                            <% for(condition in conditions){%>
+                                , @RequestParam(required = false) ${condition.type} ${condition.name}
+                            <% } %>
+                            ) {
+        Specification<${name}> specification = (Root<${name}> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            <% for(condition in conditions){
+                if (condition.expression != null) {
+            %>
+            if (${condition.expression}) {
+            <% } else { %>
+            if (!StringUtils.isEmpty(${condition.name})) {
+            <% } %>
+                predicates.add(cb.${condition.logic}(root.get("${condition.name}"), ${condition.name}));
+            }
+            <% } %>
+            return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+        };
+        return ${lower_name}Repository.findAll(specification, new QPageRequest(pageIndex, pageSize));
+    }
+
+    @PostMapping("/${lower_name}")
+    ${name} add(${name} ${lower_name}) {
+        return ${lower_name}Repository.save(${lower_name});
+    }
+
+    @PutMapping("/${lower_name}/{id}")
+    ${name} update(${name} ${lower_name}, @PathVariable String id) {
+        ${lower_name}.setId(id);
+        return ${lower_name}Repository.save(${lower_name});
+    }
+
+    @DeleteMapping("/${lower_name}/{id}")
+    void delete(@PathVariable String id) {
+        ${lower_name}Repository.deleteById(id);
+    }
+
+}
