@@ -19,7 +19,7 @@ public class ${name}Controller {
     ${name}Repository ${lower_name}Repository;
 
     @GetMapping("/${lower_name}s")
-    Page<${name}> queryByName(int pageIndex, int pageSize
+    Page<${name}> search(int pageIndex, int pageSize
                             <% for(condition in conditions){%>
                                 , @RequestParam(required = false) ${condition.type} ${condition.name}
                             <% } %>
